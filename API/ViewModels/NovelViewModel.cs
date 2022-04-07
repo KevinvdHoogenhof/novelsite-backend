@@ -15,6 +15,7 @@ namespace API.ViewModels
         public string CoverImage { get; set; }
         public string Description { get; set; }
         public List<GenreViewModel> Genres { get; set; }
+        public List<CommentViewModel> Comments { get; set; }
         public NovelViewModel(Novel novel)
         {
             Id = novel.Id;
@@ -30,6 +31,14 @@ namespace API.ViewModels
                     Genres.Add(new(novel.Genres[i].Genre));
                 }
 
+            }
+            Comments = new();
+            if (novel.Comments != null)
+            {
+                for (int i = 0; i < novel.Comments.Count; i++)
+                {
+                    Comments.Add(new(novel.Comments[i]));
+                }
             }
         }
     }

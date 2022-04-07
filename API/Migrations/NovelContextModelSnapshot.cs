@@ -27,13 +27,16 @@ namespace API.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
@@ -43,6 +46,39 @@ namespace API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("API.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("NovelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Review")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NovelId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("API.Models.Favorites", b =>
@@ -71,7 +107,8 @@ namespace API.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -86,7 +123,8 @@ namespace API.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Author")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("CoverImage")
                         .HasColumnType("nvarchar(max)");
@@ -95,7 +133,8 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -125,7 +164,8 @@ namespace API.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -139,6 +179,21 @@ namespace API.Migrations
                         .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("API.Models.Comment", b =>
+                {
+                    b.HasOne("API.Models.Novel", "Novel")
+                        .WithMany("Comments")
+                        .HasForeignKey("NovelId");
+
+                    b.HasOne("API.Models.Account", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Novel");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Models.Favorites", b =>
@@ -181,6 +236,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Account", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Favorites");
                 });
 
@@ -191,6 +248,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Novel", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Favorites");
 
                     b.Navigation("Genres");

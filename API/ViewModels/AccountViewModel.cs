@@ -15,6 +15,7 @@ namespace API.ViewModels
         public string Token { get; set; }
         public RoleViewModel Role { get; set; }
         public List<NovelViewModel> Favorites { get; set; }
+        public List<CommentViewModel> Comments { get; set; }
         public AccountViewModel(Account account)
         {
             Id = account.Id;
@@ -31,6 +32,14 @@ namespace API.ViewModels
                 for (int i = 0; i < account.Favorites.Count; i++)
                 {
                     Favorites.Add(new(account.Favorites[i].Novel));
+                }
+            }
+            Comments = new();
+            if (account.Comments != null)
+            {
+                for (int i = 0; i < account.Comments.Count; i++)
+                {
+                    Comments.Add(new(account.Comments[i]));
                 }
             }
         }
@@ -50,6 +59,14 @@ namespace API.ViewModels
                 for (int i = 0; i < account.Favorites.Count; i++)
                 {
                     Favorites.Add(new(account.Favorites[i].Novel));
+                }
+            }
+            Comments = new();
+            if (account.Comments != null)
+            {
+                for (int i = 0; i < account.Comments.Count; i++)
+                {
+                    Comments.Add(new(account.Comments[i]));
                 }
             }
             Token = token;

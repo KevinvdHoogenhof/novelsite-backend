@@ -12,7 +12,7 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,8 +25,8 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Author = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CoverImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -41,7 +41,7 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,9 +78,9 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -90,6 +90,35 @@ namespace API.Migrations
                         name: "FK_Accounts_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Review = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    NovelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Accounts_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Comments_Novels_NovelId",
+                        column: x => x.NovelId,
+                        principalTable: "Novels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -125,6 +154,16 @@ namespace API.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_NovelId",
+                table: "Comments",
+                column: "NovelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Favorites_NovelId",
                 table: "Favorites",
                 column: "NovelId");
@@ -137,6 +176,9 @@ namespace API.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Comments");
+
             migrationBuilder.DropTable(
                 name: "Favorites");
 

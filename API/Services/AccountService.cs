@@ -35,7 +35,7 @@ namespace API.Services
                 //Check if default role exists
                 if (_context.Roles.Find(1) == null)
                 {
-                    _context.Roles.Add(new() { Id = 1, Name = "standard"});
+                    _context.Roles.Add(new() { Id = 1, Name = "Standard"});
                     _context.SaveChanges();
                 }
                 account.Role = _context.Roles.Find(1); //set standard role
@@ -52,6 +52,7 @@ namespace API.Services
                 .Include(a => a.Role)
                 .Include(a => a.Favorites)
                 .ThenInclude(a => a.Novel)
+                .Include(a => a.Comments)
                 .Single();
             if (acc.Password == password) //Check password
             {

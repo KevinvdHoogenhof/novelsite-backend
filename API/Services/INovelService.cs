@@ -10,6 +10,6 @@ namespace API.Services
     {
         public IEnumerable<Novel> GetNovels();
         public Novel GetNovel(int id);
-        public bool InsertNovel(Novel novel);
+        public int InsertNovel(Novel novel);
     }
 }

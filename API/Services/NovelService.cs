@@ -47,13 +47,15 @@ namespace API.Services
                 .Where(n => n.Id == id)
                 .Include(n => n.Genres)
                 .ThenInclude(n => n.Genre)
+                .Include(n => n.Comments)
                 .Single();
         }
-        public bool InsertNovel(Novel novel)
+        public int InsertNovel(Novel novel)
         {
             _context.Novels.Add(novel);
             _context.SaveChanges();
-            return true;
+
+            return novel.Id;
         }
     }
 }

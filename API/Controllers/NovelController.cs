@@ -37,5 +37,12 @@ namespace API.Controllers
             Novel n = _service.GetNovel(id);
             return new(n);
         }
+        [HttpPost("Create")]
+        public NovelViewModel Create(string title, string author, string coverimage, string description)
+        {
+            int id = _service.InsertNovel(new() { Title = title, Author = author, CoverImage = coverimage, Description = description });
+            Novel n = _service.GetNovel(id);
+            return new(n);
+        }
     }
 }

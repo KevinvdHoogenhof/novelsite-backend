@@ -10,6 +10,7 @@ namespace API.Data
     public interface INovelContext
     {
         public DbSet<Novel> Novels { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<NovelGenre> NovelGenres { get; set; }
