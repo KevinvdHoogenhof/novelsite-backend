@@ -24,6 +24,7 @@ namespace API.Data
             optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=NovelDB;Trusted_Connection=True;");
         }*/
         public DbSet<Novel> Novels { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<NovelGenre> NovelGenres { get; set; }
