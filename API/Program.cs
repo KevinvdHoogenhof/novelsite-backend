@@ -8,6 +8,8 @@ using API.SeedData;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace API
 {
@@ -21,6 +23,23 @@ namespace API
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
+                try
+                {
+                    var context = new NovelContext(services.GetRequiredService<DbContextOptions<NovelContext>>());
+                    if (context.Database.IsSqlServer())
+                    {
+                        context.Database.Migrate();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+
+                    throw;
+                }
 
                 try
                 {
