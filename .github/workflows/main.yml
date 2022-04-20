@@ -40,5 +40,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./API
+          builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/novelsite:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/novelsite:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/novelsite:buildcache,mode=max
