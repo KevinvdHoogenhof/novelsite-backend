@@ -63,5 +63,40 @@ namespace API.Services
                 return null;
             }
         }
+
+        public IEnumerable<Account> GetAccounts()
+        {
+            try
+            {
+                return _context.Accounts
+                    .Include(a => a.Role)
+                    .Include(a => a.Favorites)
+                    .ThenInclude(a => a.Novel)
+                    .Include(a => a.Comments)
+                    .ToArray();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Could not find account");
+            }
+        }
+
+        public Account GetAccount(int id)
+        {
+            try
+            {
+                Account acc = _context.Accounts.Where(a => a.Id == id)
+                    .Include(a => a.Role)
+                    .Include(a => a.Favorites)
+                    .ThenInclude(a => a.Novel)
+                    .Include(a => a.Comments)
+                    .Single();
+                return acc;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Could not find account");
+            }
+        }
     }
 }

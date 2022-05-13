@@ -57,5 +57,37 @@ namespace API.Services
 
             return novel.Id;
         }
+        public bool DeleteNovel(int id)
+        {
+            try
+            {
+                Novel novel = new() { Id = id };
+                _context.Novels.Attach(novel);
+                _context.Novels.Remove(novel);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Error deleting novel");
+            }
+        }
+        public bool UpdateNovel(Novel novel)
+        {
+            try
+            {
+                Novel n = _context.Novels.Find(novel.Id);
+                n.Title = novel.Title;
+                n.Author = novel.Author;
+                n.CoverImage = novel.CoverImage;
+                n.Description = novel.Description;
+                _context.SaveChanges();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Error updating novel");
+            }
+        }
     }
 }

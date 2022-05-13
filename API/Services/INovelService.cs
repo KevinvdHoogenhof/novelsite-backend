@@ -11,5 +11,7 @@ namespace API.Services
         public IEnumerable<Novel> GetNovels();
         public Novel GetNovel(int id);
         public int InsertNovel(Novel novel);
+        public bool DeleteNovel(int id);
+        public bool UpdateNovel(Novel novel);
     }
 }

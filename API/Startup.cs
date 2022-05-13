@@ -32,6 +32,19 @@ namespace API
             services.AddDbContext<INovelContext, NovelContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NovelDB")));
             //services.AddControllers();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000")
+                                                            .AllowAnyHeader()
+                                                            .AllowCredentials()
+                                                            .AllowAnyMethod()
+                        ;
+                    });
+            });
+
             services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddSwaggerGen(c =>

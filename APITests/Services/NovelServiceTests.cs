@@ -1,0 +1,130 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using API.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using API.Data;
+using Microsoft.EntityFrameworkCore;
+using API.Models;
+
+namespace API.Services.Tests
+{
+    [TestClass()]
+    public class NovelServiceTests
+    {
+        public INovelService _service;
+        [TestInitialize]
+        public void Setup()
+        {
+            var options = new DbContextOptionsBuilder<NovelContext>()
+                .UseInMemoryDatabase(databaseName: "TestNovelDB")
+                .Options;
+
+            INovelContext _context = new NovelContext(options);
+            ////
+            if (!_context.Novels.Any())
+            {
+                _context.Novels.Add(new Novel() { Title = "Novel1", Author = "author1", CoverImage = "coverimage1", Description = "novel 1 description" });
+                _context.SaveChanges();
+                _context.Novels.Add(new Novel() { Title = "Novel2", Author = "author2", CoverImage = "coverimage2", Description = "description of novel 2" });
+                _context.SaveChanges();
+                _context.Novels.Add(new Novel() { Title = "Novel3", Author = "author1", CoverImage = "coverimage3", Description = "second novel of author1" });
+                _context.SaveChanges();
+                _context.Novels.Add(new Novel() { Title = "Novel4", Author = "author3", CoverImage = "coverimage4", Description = "description of novel #4" });
+                _context.SaveChanges();
+            }
+            ////
+            if (!_context.Genres.Any())
+            {
+                _context.Genres.Add(new Genre() { Name = "Action" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Adventure" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Comedy" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Drama" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Fantasy" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Historical" });
+                _context.SaveChanges();
+                _context.Genres.Add(new Genre() { Name = "Romance" });
+                _context.SaveChanges();
+            }
+            ///
+            if (!_context.NovelGenres.Any())
+            {
+                // Novel 1
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(1), Genre = _context.Genres.Find(1) });
+                _context.SaveChanges();
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(1), Genre = _context.Genres.Find(2) });
+                _context.SaveChanges();
+                // Novel 2
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(2), Genre = _context.Genres.Find(2) });
+                _context.SaveChanges();
+                // Novel 3
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(3), Genre = _context.Genres.Find(2) });
+                _context.SaveChanges();
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(3), Genre = _context.Genres.Find(3) });
+                _context.SaveChanges();
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(3), Genre = _context.Genres.Find(6) });
+                _context.SaveChanges();
+                // Novel 4
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(4), Genre = _context.Genres.Find(4) });
+                _context.SaveChanges();
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(4), Genre = _context.Genres.Find(5) });
+                _context.SaveChanges();
+                _context.NovelGenres.Add(new() { Novel = _context.Novels.Find(4), Genre = _context.Genres.Find(7) });
+                _context.SaveChanges();
+            }
+
+            _service = new NovelService(_context);
+        }
+
+        [TestMethod()]
+        public void GetAllNovelsTest()
+        {
+            //Assert
+            Assert.AreEqual(4, _service.GetNovels().Count());
+        }
+        [TestMethod()]
+        public void GetNovelTest()
+        {
+            //Assert
+            //Try novel id 1;
+            Novel novel = _service.GetNovel(1);
+            //Check if fields are valid
+            Assert.AreEqual("Novel1", novel.Title);
+            Assert.AreEqual("author1", novel.Author);
+            Assert.AreEqual("coverimage1", novel.CoverImage);
+            Assert.AreEqual("Action", novel.Genres[0].Genre.Name);
+        }
+        [TestMethod()]
+        public void InsertNovel_ValidInfo_True()
+        {
+            //Arrange
+            Novel novel = new() { Title = "testtitle7", Author = "testauthor7", CoverImage = "testcoverimage7", Description = "testdescription7" };
+            //Act
+            novel.Id = _service.InsertNovel(novel);
+            Novel n = _service.GetNovel(novel.Id);
+            //Assert
+            Assert.AreEqual(novel.Title, n.Title);
+        }
+        [TestMethod()]
+        public void InsertNovel_MissingInfo_False()
+        {
+            //Arrange
+            //Novel does not contain a title
+            Novel novel = new() { Author = "testauthor7", CoverImage = "testcoverimage7", Description = "testdescription7" };
+            //Act
+            novel.Id = _service.InsertNovel(novel);
+            Novel n = _service.GetNovel(novel.Id);
+            //Assert
+            Assert.AreEqual(4, _service.GetNovels().Count());
+        }
+
+
+    }
+}
