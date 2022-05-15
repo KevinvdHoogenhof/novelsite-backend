@@ -41,7 +41,10 @@ namespace API.Controllers
         [HttpPost("Login")]
         public TokenViewModel Login(string email, string password)
         {
-            bool succes = _service.LoginAccount(email, password);
+            if(!_service.LoginAccount(email, password))
+            {
+                throw new InvalidOperationException("Invalid info");
+            }
             Account a = _service.GetAccount(email);
             string token = _jwt.GenerateToken(a); //Generate token
             return new(token);

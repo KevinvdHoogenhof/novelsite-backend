@@ -56,6 +56,12 @@ namespace API.Services.Tests
             _service = new AccountService(_context);
         }
         [TestMethod()]
+        public void GetAllAccountsTest()
+        {
+            //Assert
+            Assert.AreEqual(3, _service.GetAccounts().Count());
+        }
+        [TestMethod()]
         public void RegisterAccount_EmailHasNotBeenUsed_True()
         {
             //Arrange
@@ -96,12 +102,6 @@ namespace API.Services.Tests
             //Act
             //Assert
             Assert.IsFalse(_service.LoginAccount(email, password));
-        }
-        [TestMethod()]
-        public void GetAllAccountsTest()
-        {
-            //Assert
-            Assert.AreEqual(3, _service.GetAccounts().Count());
         }
         [TestMethod()]
         public void GetAccount_WithId()
