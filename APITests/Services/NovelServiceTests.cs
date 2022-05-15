@@ -102,7 +102,7 @@ namespace API.Services.Tests
             Assert.AreEqual("Action", novel.Genres[0].Genre.Name);
         }
         [TestMethod()]
-        public void InsertNovel_ValidInfo_True()
+        public void InsertNovel_Inserted()
         {
             //Arrange
             Novel novel = new() { Title = "testtitle7", Author = "testauthor7", CoverImage = "testcoverimage7", Description = "testdescription7" };
@@ -113,18 +113,32 @@ namespace API.Services.Tests
             Assert.AreEqual(novel.Title, n.Title);
         }
         [TestMethod()]
-        public void InsertNovel_MissingInfo_False()
+        public void UpdateNovel_Updated()
         {
             //Arrange
-            //Novel does not contain a title
-            Novel novel = new() { Author = "testauthor7", CoverImage = "testcoverimage7", Description = "testdescription7" };
+            //Updated version of novel with id = 1
+            Novel noveltoupdate = _service.GetNovel(1);
+            string updatedtitle = "NewTitle";
+            noveltoupdate.Title = updatedtitle;
+            //Act
+            //Assert
+            Assert.IsTrue(_service.UpdateNovel(noveltoupdate));
+            Novel novel = _service.GetNovel(1); 
+            //
+            Assert.AreEqual(updatedtitle, novel.Title);
+        }
+        [TestMethod()]
+        public void DeleteNovel_Deleted()
+        {
+            //Arrange
+            Novel novel = new() { Title = "testtitlefornoveltodelete", Author = "testauthorfornoveltodelete", CoverImage = "testcoverimagefornoveltodelete", Description = "testdescriptionfornoveltodelete" };
             //Act
             novel.Id = _service.InsertNovel(novel);
-            Novel n = _service.GetNovel(novel.Id);
+            //delete novel with that we just inserted
+            Assert.IsTrue(_service.DeleteNovel(novel.Id));
+            //
             //Assert
-            Assert.AreEqual(4, _service.GetNovels().Count());
+            Assert.ThrowsException<InvalidOperationException>(() => _service.GetNovel(novel.Id));
         }
-
-
     }
 }

@@ -43,12 +43,20 @@ namespace API.Services
         }
         public Novel GetNovel(int id)
         {
-            return _context.Novels
+            try
+            {
+                return _context.Novels
                 .Where(n => n.Id == id)
                 .Include(n => n.Genres)
                 .ThenInclude(n => n.Genre)
                 .Include(n => n.Comments)
                 .Single();
+            }
+            catch
+            {
+
+                throw new InvalidOperationException($"Could not find novel with id {id}");
+            }
         }
         public int InsertNovel(Novel novel)
         {
@@ -61,8 +69,7 @@ namespace API.Services
         {
             try
             {
-                Novel novel = new() { Id = id };
-                _context.Novels.Attach(novel);
+                Novel novel = _context.Novels.Find(id);
                 _context.Novels.Remove(novel);
                 _context.SaveChanges();
                 return true;

@@ -138,7 +138,6 @@ namespace API.Services
                     .Single();
                 acc.Role = _context.Roles.Find(roleid);
                 _context.SaveChanges();
-                //_context.Accounts.Update(acc);
                 return true;
             }
             catch
