@@ -16,8 +16,8 @@ namespace API.Models
         public string Name { get; set; }
         [MaxLength(100)]
         public string Email { get; set; }
-        [MaxLength(20)]
         public string Password { get; set; }
+        public byte[] StoredSalt { get; set; }
         public Role Role { get; set; }
         public IList<Favorites> Favorites { get; set; }
         public IList<Comment> Comments { get; set; }

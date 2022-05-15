@@ -29,7 +29,7 @@ namespace API.Controllers
             {
                 nvms.Add(new(novels[i]));
             }
-            return nvms;
+            return nvms.ToArray();
         }
         [HttpGet("{id}")]
         public NovelViewModel Get(int id)

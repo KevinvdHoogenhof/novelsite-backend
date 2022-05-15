@@ -11,14 +11,23 @@ namespace API.Services
     public class AccountService : IAccountService
     {
         private readonly INovelContext _context;
+        private readonly IEncryptionService _encrypt;
         public AccountService(INovelContext context)
         {
             _context = context;
+            _encrypt = new EncryptionService();
         }
         public bool InsertAccount(Account account)
         {
-            _context.Accounts.Add(account);
-            _context.SaveChanges();
+            try
+            {
+                _context.Accounts.Add(account);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return false;
+            }
             return true;
         }
         //Check if exists
@@ -28,40 +37,31 @@ namespace API.Services
         }
 
         //Register
-        public bool RegisterAccount(Account account)
+        public bool RegisterAccount(string name, string email, string password)
         {
-            if (!DoesEmailExist(account.Email))
+            if (!DoesEmailExist(email))
             {
-                //Check if default role exists
-                if (_context.Roles.Find(1) == null)
-                {
-                    _context.Roles.Add(new() { Id = 1, Name = "Standard"});
-                    _context.SaveChanges();
-                }
-                account.Role = _context.Roles.Find(1); //set standard role
-                return InsertAccount(account);
+                //Encypt password
+                Account a = new();
+                a.Name = name;
+                a.Email = email;
+                var hashsalt = _encrypt.EncryptPassword(password);
+                a.Password = hashsalt.Hash;
+                a.StoredSalt = hashsalt.Salt;
+
+                a.Role = _context.Roles.Find(1); //set standard role
+                return InsertAccount(a);
             }
             else
             {
                 return false;
             }
         }
-        public Account LoginAccount(string email, string password)
+        public bool LoginAccount(string email, string password)
         {
-            Account acc = _context.Accounts.Where(a => a.Email == email)
-                .Include(a => a.Role)
-                .Include(a => a.Favorites)
-                .ThenInclude(a => a.Novel)
-                .Include(a => a.Comments)
-                .Single();
-            if (acc.Password == password) //Check password
-            {
-                return acc;
-            }
-            else
-            {
-                return null;
-            }
+            var account = _context.Accounts.FirstOrDefault(a => a.Email == email);
+            var doesPasswordMatch = _encrypt.VerifyPassword(password, account.StoredSalt, account.Password);
+            return doesPasswordMatch;
         }
 
         public IEnumerable<Account> GetAccounts()
@@ -77,7 +77,7 @@ namespace API.Services
             }
             catch (InvalidOperationException)
             {
-                throw new InvalidOperationException("Could not find account");
+                throw new InvalidOperationException("Could not get accounts");
             }
         }
 
@@ -96,6 +96,55 @@ namespace API.Services
             catch (InvalidOperationException)
             {
                 throw new InvalidOperationException("Could not find account");
+            }
+        }
+        public Account GetAccount(string email)
+        {
+            try
+            {
+                Account acc = _context.Accounts.Where(a => a.Email == email)
+                    .Include(a => a.Role)
+                    .Include(a => a.Favorites)
+                    .ThenInclude(a => a.Novel)
+                    .Include(a => a.Comments)
+                    .Single();
+                return acc;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Could not find account");
+            }
+        }
+        public IEnumerable<Role> GetRoles()
+        {
+            try
+            {
+                return _context.Roles
+                    .ToArray();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Could not get roles");
+            }
+        }
+
+        public bool SetRole(int userid, int roleid)
+        {
+            try
+            {
+
+                Account acc = _context.Accounts.Where(a => a.Id == userid)
+                    .Include(a => a.Role)
+                    .Single();
+                acc.Role = _context.Roles.Find(roleid);
+                _context.SaveChanges();
+                //_context.Accounts.Update(acc);
+                return true;
+            }
+            catch
+            {
+
+                return false;
             }
         }
     }

@@ -11,7 +11,8 @@ namespace API.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        //public string Password { get; set; }
+        //public byte[] StoredSalt { get; set; }
         public RoleViewModel Role { get; set; }
         public List<NovelViewModel> Favorites { get; set; }
         public List<CommentViewModel> Comments { get; set; }
@@ -20,7 +21,8 @@ namespace API.ViewModels
             Id = account.Id;
             Name = account.Name;
             Email = account.Email;
-            Password = account.Password;
+            //Password = account.Password;
+            //StoredSalt = account.StoredSalt;
             if (account.Role != null)
             {
                 Role = new(account.Role);

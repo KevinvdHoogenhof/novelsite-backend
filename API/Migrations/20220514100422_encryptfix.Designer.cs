@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(NovelContext))]
-    [Migration("20220407110840_noveldb")]
-    partial class noveldb
+    [Migration("20220514100422_encryptfix")]
+    partial class encryptfix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,11 +37,13 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("StoredSalt")
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
