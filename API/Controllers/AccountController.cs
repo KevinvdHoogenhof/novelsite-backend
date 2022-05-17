@@ -35,7 +35,7 @@ namespace API.Controllers
             }
             else
             {
-                return null; //invalid request -> no account created
+                throw new InvalidOperationException("Invalid info");
             }
         }
         [HttpPost("Login")]
