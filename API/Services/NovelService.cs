@@ -96,5 +96,46 @@ namespace API.Services
                 throw new InvalidOperationException("Error updating novel");
             }
         }
+        public IEnumerable<Novel> GetFavorites(int id)
+        {
+            Account a = _context.Accounts.Where(a => a.Id == id)
+                    .Include(a => a.Favorites)
+                    .ThenInclude(a => a.Novel)
+                    .Single();
+            List<Novel> novels = new();
+            for (int i = 0; i < a.Favorites.Count(); i++)
+            {
+                novels.Add(a.Favorites[i].Novel);
+            }
+            return novels;
+        }
+        public bool AddFavorite(int userid, int novelid)
+        {
+            try
+            {
+                _context.Favorites.Add(new() { Novel = _context.Novels.Find(novelid), Account = _context.Accounts.Find(userid) });
+                _context.SaveChanges();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Error adding novel to favorites");
+            }
+        }
+        public bool RemoveFavorite(int userid, int novelid)
+        {
+            try
+            {
+                Favorites f = _context.Favorites.Where(f => f.AccountId == userid && f.NovelId == novelid)
+                    .Single();
+                _context.Favorites.Remove(f);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("Error removing novel from favorites");
+            }
+        }
     }
 }

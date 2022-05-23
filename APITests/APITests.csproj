@@ -4,6 +4,10 @@
     <TargetFramework>.NETCoreApp,Version=v5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+    <DockerfileContext>..\API</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>

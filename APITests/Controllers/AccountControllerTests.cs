@@ -37,7 +37,7 @@ namespace API.Controllers.Tests
             });
         }
         [TestMethod()]
-        public async Task GetAccounts()
+        public async Task GetAccountsTest()
         {
             //Arrange
             //Act
@@ -155,7 +155,7 @@ namespace API.Controllers.Tests
             Assert.AreNotEqual(HttpStatusCode.OK, response.StatusCode);
         }
         [TestMethod()]
-        public async Task GetRoles()
+        public async Task GetRolesTest()
         {
             //Arrange
             //Act
@@ -168,6 +168,69 @@ namespace API.Controllers.Tests
             List<Role> r = JsonConvert.DeserializeObject<List<Role>>(content);
             Assert.AreEqual("Standard", r[0].Name);
             Assert.AreEqual("Admin", r[1].Name);
+        }
+        [TestMethod()]
+        public async Task SetRole_Validtoken_Succes()
+        {
+            //Arrange
+            string email = "admin";
+            string pw = "admin";
+            //Act
+            var request = new HttpRequestMessage(new HttpMethod("POST"), $"/account/login?email={email}&password={pw}"); //Login to account to get valid token
+            var response = await _client.SendAsync(request);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            var content = await response.Content.ReadAsStringAsync();
+
+            TokenViewModel token = JsonConvert.DeserializeObject<TokenViewModel>(content);
+            Assert.IsInstanceOfType(token.Token, typeof(string));
+
+            //Arrange
+            int userid = 1;
+            int roleid = 2;
+            //Act
+            var newrequest = new HttpRequestMessage(new HttpMethod("POST"), $"/account/setrole?token={token.Token}&userid={userid}&roleid={roleid}");
+            var newresponse = await _client.SendAsync(newrequest);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, newresponse.StatusCode);
+        }
+        [TestMethod()]
+        public async Task SetRole_Invalidtoken_Failure()
+        {
+            //Arrange
+            string faketoken = "faketoken";
+            int userid = 1;
+            int roleid = 2;
+            //Act
+            var request = new HttpRequestMessage(new HttpMethod("POST"), $"/account/setrole?token={faketoken}&userid={userid}&roleid={roleid}");
+            var response = await _client.SendAsync(request);
+            //Assert
+            Assert.AreNotEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+        [TestMethod()]
+        public async Task SetRole_InvalidRole_Failure()
+        {
+            //Arrange
+            string email = "email1";
+            string pw = "pw1";
+            //Act
+            var request = new HttpRequestMessage(new HttpMethod("POST"), $"/account/login?email={email}&password={pw}"); //Login to account to get valid token
+            var response = await _client.SendAsync(request);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            var content = await response.Content.ReadAsStringAsync();
+
+            TokenViewModel token = JsonConvert.DeserializeObject<TokenViewModel>(content);
+            Assert.IsInstanceOfType(token.Token, typeof(string));
+
+            //Arrange
+            int userid = 1;
+            int roleid = 2;
+            //Act
+            var newrequest = new HttpRequestMessage(new HttpMethod("POST"), $"/account/setrole?token={token.Token}&userid={userid}&roleid={roleid}");
+            var newresponse = await _client.SendAsync(newrequest);
+            //Assert
+            Assert.AreNotEqual(HttpStatusCode.OK, newresponse.StatusCode);
         }
     }
 }

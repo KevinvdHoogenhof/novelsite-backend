@@ -61,6 +61,9 @@ namespace API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureServices(s => {
+                    s.AddHostedService<TimedHostedService>();
                 });
     }
 }

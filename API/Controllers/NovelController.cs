@@ -54,5 +54,26 @@ namespace API.Controllers
         {
             return _service.UpdateNovel(new() { Id = id, Title = title, Author = author, CoverImage = coverimage, Description = description });
         }
+        [HttpGet("Favorites")]
+        public IEnumerable<NovelViewModel> Favorites(int id)
+        {
+            List<Novel> novels = _service.GetFavorites(id).ToList();
+            List<NovelViewModel> nvms = new();
+            for (int i = 0; i < novels.Count(); i++)
+            {
+                nvms.Add(new(novels[i]));
+            }
+            return nvms.ToArray();
+        }
+        [HttpPost("AddFavorite")]
+        public bool AddFavorite(int userid, int novelid)
+        {
+            return _service.AddFavorite(userid, novelid);
+        }
+        [HttpPost("RemoveFavorite")]
+        public bool RemoveFavorite(int userid, int novelid)
+        {
+            return _service.RemoveFavorite(userid, novelid);
+        }
     }
 }

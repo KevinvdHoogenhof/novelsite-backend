@@ -80,6 +80,17 @@ namespace API.Services.Tests
                 _context.SaveChanges();
             }
 
+            if (!_context.Favorites.Any())
+            {
+                // Account 1
+                _context.Favorites.Add(new() { Novel = _context.Novels.Find(1), Account = _context.Accounts.Find(1) });
+                _context.SaveChanges();
+                _context.Favorites.Add(new() { Novel = _context.Novels.Find(2), Account = _context.Accounts.Find(1) });
+                _context.SaveChanges();
+                _context.Favorites.Add(new() { Novel = _context.Novels.Find(3), Account = _context.Accounts.Find(1) });
+                _context.SaveChanges();
+            }
+
             _service = new NovelService(_context);
         }
 
@@ -139,6 +150,54 @@ namespace API.Services.Tests
             //
             //Assert
             Assert.ThrowsException<InvalidOperationException>(() => _service.GetNovel(novel.Id));
+        }
+        [TestMethod()]
+        public void GetFavoritesTest()
+        {
+            //Assert
+            Assert.AreEqual(4, _service.GetFavorites(1).Count());
+        }
+        [TestMethod()]
+        public void AddFavorite_ValidInfo_True()
+        {
+            //Arrange
+            int userid = 1;
+            int novelid = 4;
+            //Act
+            bool result = _service.AddFavorite(userid,novelid);
+            //Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(4, _service.GetFavorites(1).Count());
+        }
+        [TestMethod()]
+        public void AddFavorite_InvalidInfo_False()
+        {
+            //Arrange
+            int userid = 7;
+            int novelid = 6;
+            //Assert
+            Assert.ThrowsException<InvalidOperationException>(() => _service.AddFavorite(userid, novelid));
+        }
+        [TestMethod()]
+        public void RemoveFavorite_ValidInfo_True()
+        {
+            //Arrange
+            int userid = 1;
+            int novelid = 4;
+            //Act
+            bool result = _service.RemoveFavorite(userid, novelid);
+            //Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(3, _service.GetFavorites(1).Count());
+        }
+        [TestMethod()]
+        public void RemoveFavorite_InvalidInfo_False()
+        {
+            //Arrange
+            int userid = 7;
+            int novelid = 6;
+            //Assert
+            Assert.ThrowsException<InvalidOperationException>(() => _service.RemoveFavorite(userid, novelid));
         }
     }
 }
