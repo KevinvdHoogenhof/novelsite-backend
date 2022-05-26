@@ -1,16 +1,21 @@
 ﻿using API.Data;
 using API.Models;
+using API.Services;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace API.SeedData
 {
     public static class SeedData
     {
+        private static IEncryptionService _encrypt = new EncryptionService();
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new NovelContext(serviceProvider.GetRequiredService<DbContextOptions<NovelContext>>()))
@@ -22,14 +27,22 @@ namespace API.SeedData
                     context.Roles.Add(new Role() { Name = "Admin" });
                     context.SaveChanges();
                 }
-                // Look for any accounts
+                // Look for any accounts 
                 if (!context.Accounts.Any())
                 {
-                    context.Accounts.Add(new Account() { Name = "account1", Email = "email1", Password = "pw1", Role = context.Roles.Find(1) });
+                    ////
+                    var hashsalt = _encrypt.EncryptPassword("pw1");
+                    context.Accounts.Add(new Account() { Name = "name1", Email = "email1", Password = hashsalt.Hash, StoredSalt = hashsalt.Salt, Role = context.Roles.Find(1) });
                     context.SaveChanges();
-                    context.Accounts.Add(new Account() { Name = "admin", Email = "admin", Password = "admin", Role = context.Roles.Find(2) });
+
+                    ////
+                    var hashsalt2 = _encrypt.EncryptPassword("admin");
+                    context.Accounts.Add(new Account() { Name = "admin", Email = "admin", Password = hashsalt2.Hash, StoredSalt = hashsalt2.Salt, Role = context.Roles.Find(2) });
                     context.SaveChanges();
-                    context.Accounts.Add(new Account() { Name = "name3", Email = "email3", Password = "pw3", Role = context.Roles.Find(1) });
+
+                    ////
+                    var hashsalt3 = _encrypt.EncryptPassword("pw3");
+                    context.Accounts.Add(new Account() { Name = "name3", Email = "email3", Password = hashsalt3.Hash, StoredSalt = hashsalt3.Salt, Role = context.Roles.Find(1) });
                     context.SaveChanges();
                 }
                 if (!context.Novels.Any())

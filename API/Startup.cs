@@ -32,8 +32,20 @@ namespace API
             services.AddDbContext<INovelContext, NovelContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NovelDB")));
             //services.AddControllers();
-            services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000")
+                                                            .AllowAnyHeader()
+                                                            .AllowCredentials()
+                                                            .AllowAnyMethod()
+                        ;
+                    });
+            });
+
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -53,6 +65,8 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

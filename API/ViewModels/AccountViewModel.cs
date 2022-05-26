@@ -11,8 +11,8 @@ namespace API.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        public string Token { get; set; }
+        //public string Password { get; set; }
+        //public byte[] StoredSalt { get; set; }
         public RoleViewModel Role { get; set; }
         public List<NovelViewModel> Favorites { get; set; }
         public List<CommentViewModel> Comments { get; set; }
@@ -21,7 +21,8 @@ namespace API.ViewModels
             Id = account.Id;
             Name = account.Name;
             Email = account.Email;
-            Password = account.Password;
+            //Password = account.Password;
+            //StoredSalt = account.StoredSalt;
             if (account.Role != null)
             {
                 Role = new(account.Role);
@@ -42,34 +43,6 @@ namespace API.ViewModels
                     Comments.Add(new(account.Comments[i]));
                 }
             }
-        }
-        public AccountViewModel(Account account, string token)
-        {
-            Id = account.Id;
-            Name = account.Name;
-            Email = account.Email;
-            Password = account.Password;
-            if (account.Role != null)
-            {
-                Role = new(account.Role);
-            }
-            Favorites = new();
-            if (account.Favorites != null)
-            {
-                for (int i = 0; i < account.Favorites.Count; i++)
-                {
-                    Favorites.Add(new(account.Favorites[i].Novel));
-                }
-            }
-            Comments = new();
-            if (account.Comments != null)
-            {
-                for (int i = 0; i < account.Comments.Count; i++)
-                {
-                    Comments.Add(new(account.Comments[i]));
-                }
-            }
-            Token = token;
         }
     }
 }

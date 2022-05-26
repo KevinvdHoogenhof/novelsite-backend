@@ -3,6 +3,7 @@ using API.Models;
 using API.Services;
 using API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,34 +13,96 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Produces("application/json")]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _service;
-        public AccountController(INovelContext context)
+        private readonly IJWTService _jwt;
+        public AccountController(INovelContext context, IConfiguration config)
         {
             _service = new AccountService(context);
+            _jwt = new JWTService(config);
         }
         [HttpPost("Register")]
-        public AccountViewModel Register(string name, string email, string password)
+        public TokenViewModel Register(string name, string email, string password)
         {
-            Account a = new() { Name = name, Email = email, Password = password };
-            bool registered = _service.RegisterAccount(a);
+            bool registered = _service.RegisterAccount(name, email, password);
             if (registered)
             {
-                string token = "token"; //Generate token
-                return new(a, token);
+                Account a = _service.GetAccount(email);
+                string token = _jwt.GenerateToken(a); //Generate token
+                return new(token);
             }
             else
             {
-                return null; //invalid request -> no account created
+                throw new InvalidOperationException("Invalid info");
             }
         }
         [HttpPost("Login")]
-        public AccountViewModel Login(string email, string password)
+        public TokenViewModel Login(string email, string password)
         {
-            Account a = _service.LoginAccount(email, password);
-            string token = "token"; //Generate token
-            return new(a, token);
+            if(!_service.LoginAccount(email, password))
+            {
+                throw new InvalidOperationException("Invalid info");
+            }
+            Account a = _service.GetAccount(email);
+            string token = _jwt.GenerateToken(a); //Generate token
+            return new(token);
+        }
+        [HttpGet]
+        public IEnumerable<AccountViewModel> Get()
+        {
+            List<Account> accounts = _service.GetAccounts().ToList();
+            List<AccountViewModel> avms = new();
+            for (int i = 0; i < accounts.Count(); i++)
+            {
+                avms.Add(new(accounts[i]));
+            }
+            return avms.ToArray();
+        }
+        [HttpGet("{id}")]
+        public AccountViewModel Get(int id)
+        {
+            Account a = _service.GetAccount(id);
+            return new(a);
+        }
+        [HttpGet("Info")]
+        public AccountInfoViewModel Info(string token)
+        {
+            if (!_jwt.ValidateToken(token))
+            {
+                throw new InvalidOperationException("Invalid token");
+            }
+            string email = _jwt.GetClaim(token, "Email");
+            Account a = _service.GetAccount(email);
+            string name = a.Name;
+            string role = a.Role.Name;
+            int id = a.Id;
+            return new(id, name, email, role);
+        }
+        [HttpGet("Roles")]
+        public IEnumerable<RoleViewModel> Roles()
+        {
+            List<Role> roles = _service.GetRoles().ToList();
+            List<RoleViewModel> rvms = new();
+            for (int i = 0; i < roles.Count(); i++)
+            {
+                rvms.Add(new(roles[i]));
+            }
+            return rvms.ToArray();
+        }
+        [HttpPost("SetRole")]
+        public bool SetRole(string token, int userid, int roleid)
+        {
+            if (!_jwt.ValidateToken(token))
+            {
+                throw new InvalidOperationException("Invalid token");
+            }
+            if ("Admin" !=_jwt.GetClaim(token,"Role"))
+            {
+                throw new UnauthorizedAccessException("No permission");
+            }
+            return _service.SetRole(userid, roleid);
         }
     }
 }

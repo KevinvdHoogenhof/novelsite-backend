@@ -49,6 +49,7 @@ namespace API
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred seeding the DB.");
+                    throw;
                 }
             }
 
@@ -60,6 +61,9 @@ namespace API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureServices(s => {
+                    s.AddHostedService<TimedHostedService>();
                 });
     }
 }
