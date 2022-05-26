@@ -41,6 +41,10 @@ namespace API
                                                             .AllowAnyHeader()
                                                             .AllowCredentials()
                                                             .AllowAnyMethod()
+                              .WithOrigins("http://localhost:3001")
+                                                            .AllowAnyHeader()
+                                                            .AllowCredentials()
+                                                            .AllowAnyMethod()
                         ;
                     });
             });
