@@ -35,6 +35,7 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+          arguments: '--configuration $(Debug)'
       -
         name: Build and push
         uses: docker/build-push-action@v2
