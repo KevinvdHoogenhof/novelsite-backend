@@ -12,12 +12,9 @@ COPY ["API.csproj", "."]
 RUN dotnet restore 
 COPY . .
 
-#FROM build AS test
-#LABEL test=true
-#RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" APITests/APITests.csproj
+WORKDIR "/src/APITests"
+CMD ["dotnet", "test", "--logger:trx"]
 
-WORKDIR "/src"
-RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" 
 WORKDIR "/src/."
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
@@ -30,6 +27,7 @@ COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "API.dll"]
 
 
+#RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" 
 
 #FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 #WORKDIR /app
