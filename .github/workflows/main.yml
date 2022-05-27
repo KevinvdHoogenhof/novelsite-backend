@@ -27,28 +27,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
-      - 
-        name: Build
-        run: dotnet build API.sln --configuration Release
-        working-directory: ./API
-      - 
-        name: Test
-        run: dotnet test APITests.csproj --logger "trx;LogFileName=test-results.trx" || true
-        working-directory: ./API
-      - 
-        name: Test Report
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: DotNET Tests
-          path: "**/test-results.trx"                            
-          reporter: dotnet-trx
-          fail-on-error: true
-      -
         name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
