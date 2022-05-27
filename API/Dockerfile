@@ -9,13 +9,13 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["API.csproj", "."]
 RUN dotnet restore 
-COPY . ./
+COPY . .
 WORKDIR "/src/."
-RUN dotnet test API.sln
+RUN dotnet test #API.sln
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
 FROM build AS publish
-RUN dotnet test API.sln
+RUN dotnet test #API.sln
 RUN dotnet publish "API.csproj" -c Release -o /app/publish
 #
 FROM base AS final
