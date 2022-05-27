@@ -14,7 +14,7 @@ RUN dotnet restore
 COPY . .
 
 WORKDIR "/src/."
-RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" 
+RUN dotnet test -c --results-directory /testresults --logger "trx;LogFileName=test_results.trx" 
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
 FROM build AS publish
