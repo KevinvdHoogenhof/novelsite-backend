@@ -10,7 +10,7 @@ WORKDIR /src
 #COPY ["API.csproj", "."]
 COPY *.sln .
 COPY API.csproj .
-COPY APITests.csproj ./APITests/
+COPY APITests/*.csproj ./APITests/
 RUN dotnet restore 
 
 COPY . .
