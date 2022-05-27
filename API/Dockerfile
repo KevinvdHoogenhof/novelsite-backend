@@ -12,7 +12,7 @@ COPY ["API.csproj", "."]
 RUN dotnet restore 
 COPY . .
 
-WORKDIR "/src/APITests"
+WORKDIR "/src/API"
 RUN dotnet test --logger:trx API.sln
 
 WORKDIR "/src/."
