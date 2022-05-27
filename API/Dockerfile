@@ -9,8 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 #COPY ["API.csproj", "."]
 COPY *.sln .
-COPY API.csproj .
-COPY APITests.csproj .
+#COPY API.csproj . workdir not found
 RUN dotnet restore 
 
 COPY . .
