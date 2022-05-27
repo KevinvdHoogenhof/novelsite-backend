@@ -10,14 +10,15 @@ WORKDIR /src
 COPY ["API.csproj", "."]
 
 RUN dotnet restore 
-COPY . ./
+COPY . .
 
 #FROM build AS test
 #LABEL test=true
 #RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" APITests/APITests.csproj
 
-WORKDIR "/src/."
+WORKDIR "/src"
 RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" APITests/APITests.csproj
+WORKDIR "/src/."
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
 FROM build AS publish
