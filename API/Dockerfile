@@ -10,8 +10,8 @@ WORKDIR /src
 #COPY ["API.csproj", "."]
 COPY *.sln .
 COPY API.csproj .
-#COPY ./APITests/APITests.csproj .
-#COPY docker-compose.dcproj .
+COPY ./APITests/APITests.csproj .
+COPY docker-compose.dcproj .
 RUN dotnet restore 
 
 COPY . .
