@@ -8,14 +8,19 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["API.csproj", "."]
+COPY ["APITests/APITests.csproj", "APITests/"]
+
 RUN dotnet restore 
-COPY . ./
+COPY . .
+
+FROM build AS test
+LABEL test=true
+RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" APITests/APITests.csproj
+
 WORKDIR "/src/."
-RUN dotnet test
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
 FROM build AS publish
-RUN dotnet test
 RUN dotnet publish "API.csproj" -c Release -o /app/publish
 #
 FROM base AS final
