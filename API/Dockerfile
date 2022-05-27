@@ -6,12 +6,11 @@ EXPOSE 80
 EXPOSE 443
 #
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
+#WORKDIR /src
 #COPY ["API.csproj", "."]
 COPY *.sln .
-COPY API.csproj .
-COPY ./APITests/APITests.csproj .
-COPY docker-compose.dcproj .
+COPY src/API.csproj .
+COPY /APITests/APITests.csproj .
 RUN dotnet restore 
 
 COPY . .
