@@ -13,7 +13,7 @@ RUN dotnet restore
 COPY . .
 
 WORKDIR "/src/API"
-RUN dotnet test --logger:trx API.sln
+RUN dotnet test --logger:trx
 
 WORKDIR "/src/."
 RUN dotnet build "API.csproj" -c Release -o /app/build
