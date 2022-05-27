@@ -17,8 +17,7 @@ COPY . .
 #RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" APITests/APITests.csproj
 
 WORKDIR "/src"
-FROM build AS test
-RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" API.sln
+RUN dotnet test -c -release --results-directory /testresults --logger "trx;LogFileName=test_results.trx" 
 WORKDIR "/src/."
 RUN dotnet build "API.csproj" -c Release -o /app/build
 #
