@@ -155,7 +155,7 @@ namespace API.Services.Tests
         public void GetFavoritesTest()
         {
             //Assert
-            Assert.AreEqual(4, _service.GetFavorites(1).Count());
+            Assert.AreEqual(3, _service.GetFavorites(1).Count());
         }
         [TestMethod()]
         public void AddFavorite_ValidInfo_True()
