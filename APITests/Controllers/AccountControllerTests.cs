@@ -232,5 +232,11 @@ namespace API.Controllers.Tests
             //Assert
             Assert.AreNotEqual(HttpStatusCode.OK, newresponse.StatusCode);
         }
+        [TestMethod()]
+        public void FailTest()
+        {
+            //Assert
+            Assert.Fail();
+        }
     }
 }
