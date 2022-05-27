@@ -37,7 +37,8 @@ jobs:
         working-directory: ./API
       - 
         name: Test
-        run: dotnet test --logger "trx;LogFileName=test-results.trx" || true
+        run: dotnet test APITests.csproj --logger "trx;LogFileName=test-results.trx" || true
+        working-directory: ./API
       - 
         name: Test Report
         uses: dorny/test-reporter@v1
