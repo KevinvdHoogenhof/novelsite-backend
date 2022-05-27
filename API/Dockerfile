@@ -9,6 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY *.sln .
 COPY ["API.csproj", "."]
+COPY ["APITests.csproj", "."]
+COPY ["docker-compose.dcproj", "."]
 
 RUN dotnet restore 
 COPY . .
