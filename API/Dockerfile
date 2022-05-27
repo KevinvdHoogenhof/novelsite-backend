@@ -10,7 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 #COPY ["API.csproj", "."]
 COPY *.sln .
 COPY src/API.csproj .
-COPY /APITests/APITests.csproj .
 RUN dotnet restore 
 
 COPY . .
