@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ["API.csproj", "."]
 
 RUN dotnet restore 
-COPY . .
+COPY . ./
 
 #FROM build AS test
 #LABEL test=true
