@@ -20,13 +20,7 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore ./API/API.csproj
-    - name: Restore dependencies tests
-      run: dotnet restore ./APItests/APITests.csproj
     - name: Build
       run: dotnet build ./API/API.csproj --no-restore
-    - name: Build tests
-      run: dotnet build ./APItests/APITests.csproj --no-restore
     - name: Test
       run: dotnet test ./API/API.csproj --no-build --verbosity normal
-    - name: Test tests
-      run: dotnet test ./APItests/APITests.csproj --no-build --verbosity normal
