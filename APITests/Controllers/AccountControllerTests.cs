@@ -230,7 +230,13 @@ namespace API.Controllers.Tests
             var newrequest = new HttpRequestMessage(new HttpMethod("POST"), $"/account/setrole?token={token.Token}&userid={userid}&roleid={roleid}");
             var newresponse = await _client.SendAsync(newrequest);
             //Assert
-            Assert.AreNotEqual(HttpStatusCode.OK, newresponse.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, newresponse.StatusCode);
+        }
+        [TestMethod()]
+        public void FailTest()
+        {
+            //Assert
+            Assert.Fail();
         }
     }
 }
